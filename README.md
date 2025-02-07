@@ -15,4 +15,4 @@ DuckIt is a mobile app built using **Jetpack Compose** and the **MVVM** architec
 ⚠️ **Upvote and downvote aren't working** due to a **403 error**, so I wasn't able to fully test this functionality.  
 
 ##ScreenShot
-![DuckIt Screenshot](Screenshot 2025-02-07 at 2.46.33 AM)
+![DuckIt Screenshot](assets/Screenshot 2025-02-07 at 2.46.33 AM.png)
