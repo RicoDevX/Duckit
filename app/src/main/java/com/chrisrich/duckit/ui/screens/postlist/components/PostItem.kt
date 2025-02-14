@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -75,7 +76,7 @@ fun PostItem(post: Post, onShowLoginPrompt: () -> Unit) {
                     }
                 )
                 .build(),
-            contentDescription = "Duck Image",
+            contentDescription = stringResource(R.string.duck_image),
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(imageAspectRatio), // Uses original aspect ratio
@@ -86,7 +87,7 @@ fun PostItem(post: Post, onShowLoginPrompt: () -> Unit) {
         if (imageState is AsyncImagePainter.State.Error) {
             Image(
                 painter = painterResource(id = R.drawable.img_photo_not_found),
-                contentDescription = "Duck Not Found",
+                contentDescription = stringResource(R.string.duck_not_found),
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -114,12 +115,12 @@ fun PostItem(post: Post, onShowLoginPrompt: () -> Unit) {
                             modifier = Modifier.weight(1f)
                         ) {
                             Text(text = post.headline, fontSize = 18.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
-                            Text(text = "By ${post.author}", fontSize = 14.sp, color = Color.Gray)
+                            Text(text = stringResource(R.string.by, post.author), fontSize = 14.sp, color = Color.Gray)
                         }
                         IconButton(onClick = { showDialog = false }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "Close",
+                                contentDescription = stringResource(R.string.close),
                                 tint = Color.Black
                             )
                         }
@@ -131,7 +132,7 @@ fun PostItem(post: Post, onShowLoginPrompt: () -> Unit) {
                             .data(post.image)
                             .crossfade(true)
                             .build(),
-                        contentDescription = "Full-Screen Duck Image",
+                        contentDescription = stringResource(R.string.full_screen_duck_image),
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(imageAspectRatio)
@@ -163,7 +164,7 @@ fun PostItem(post: Post, onShowLoginPrompt: () -> Unit) {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.KeyboardArrowUp,
-                                contentDescription = "Upvote",
+                                contentDescription = stringResource(R.string.upvote),
                                 tint = Color.Black
                             )
                         }
@@ -194,7 +195,7 @@ fun PostItem(post: Post, onShowLoginPrompt: () -> Unit) {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = "Downvote",
+                                contentDescription = stringResource(R.string.down_vote),
                                 tint = Color.Black
                             )
                         }

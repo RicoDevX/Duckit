@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">Duckit</string>
+    <string name="duckit_logo_content_description">Duckit Logo</string>
+    <string name="back">Back</string>
+    <string name="welcome_message">Welcome to DuckIt!</string>
+    <string name="email_label">Email</string>
+    <string name="invalid_email_error">Invalid email address</string>
+    <string name="password_label">Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="already_have_account">Already have an account? Sign In</string>
+    <string name="dont_have_account">Don\'t have an account? Sign Up</string>
+    <string name="error_prefix">Error: </string>
+    <string name="error">Error: %1$s</string>
+    <string name="duck_logo">Duck Logo</string>
+    <string name="log_out">Log Out</string>
+    <string name="no_posts_found">No posts found</string>
+    <string name="login_required">Login Required</string>
+    <string name="you_need_to_log_in_to_vote_on_posts">You need to log in to vote on posts.</string>
+    <string name="log_in">Log In</string>
+    <string name="cancel">Cancel</string>
+    <string name="duck_image">Duck Image</string>
+    <string name="duck_not_found">Duck Not Found</string>
+    <string name="close">Close</string>
+    <string name="full_screen_duck_image">Full-Screen Duck Image</string>
+    <string name="upvote">Upvote</string>
+    <string name="down_vote">Down vote</string>
+    <string name="by">By %1$s</string>
 </resources>

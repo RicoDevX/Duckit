@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chrisrich.duckit.R
@@ -50,7 +51,7 @@ fun PostListScreen() {
                 title = {
                     Image(
                         painter = painterResource(id = R.drawable.ic_duckit_logo),
-                        contentDescription = "Duck Logo",
+                        contentDescription = stringResource(R.string.duck_logo),
                         modifier = Modifier.size(200.dp)
                     )
                 },
@@ -65,7 +66,7 @@ fun PostListScreen() {
                         }
                     }) {
                         Text(
-                            text = if (isLoggedIn) "Log Out" else "Sign In",
+                            text = if (isLoggedIn) stringResource(R.string.log_out) else stringResource(R.string.sign_in),
                             color = Color.White
                         )
                     }
@@ -81,7 +82,7 @@ fun PostListScreen() {
             when {
                 uiState.isLoading -> LoadingScreen()
                 uiState.error != null || uiState.posts.isNullOrEmpty() -> ErrorScreen(
-                    uiState.error ?: "No posts found"
+                    uiState.error ?: stringResource(R.string.no_posts_found)
                 )
 
                 else -> PostGallery (
@@ -95,19 +96,19 @@ fun PostListScreen() {
     if (showLoginPrompt) {
         AlertDialog(
             onDismissRequest = { showLoginPrompt = false },
-            title = { Text("Login Required") },
-            text = { Text("You need to log in to vote on posts.") },
+            title = { Text(stringResource(R.string.login_required)) },
+            text = { Text(stringResource(R.string.you_need_to_log_in_to_vote_on_posts)) },
             confirmButton = {
                 TextButton(onClick = {
                     showLoginPrompt = false
                     navigationManager.navigate(NavDestination.AuthScreen)
                 }) {
-                    Text("Log In")
+                    Text(stringResource(R.string.log_in))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLoginPrompt = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )

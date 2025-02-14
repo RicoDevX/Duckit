@@ -1,5 +1,6 @@
 package com.chrisrich.duckit.navigation
 
+import AuthScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -7,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.chrisrich.duckit.ui.screens.auth.AuthScreen
 import com.chrisrich.duckit.ui.screens.postlist.PostListScreen
 import org.koin.androidx.compose.koinViewModel
 

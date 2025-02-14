@@ -1,5 +1,3 @@
-package com.chrisrich.duckit.ui.screens.auth
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -41,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chrisrich.duckit.R
 import com.chrisrich.duckit.navigation.NavDestination
 import com.chrisrich.duckit.navigation.NavigationManager
+import com.chrisrich.duckit.ui.screens.auth.AuthViewModel
 import com.chrisrich.duckit.utils.isValidEmail
 import org.koin.androidx.compose.koinViewModel
 
@@ -54,17 +54,24 @@ fun AuthScreen() {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isSignUp by remember { mutableStateOf(false) }
-    var emailError by remember { mutableStateOf<String?>(null) }
+    var isEmailError by remember { mutableStateOf(false) }
+
+    // Determine if the button should be enabled
+    val isButtonEnabled = !isEmailError && email.isNotBlank() && password.isNotBlank()
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Image(painter = painterResource(id = R.drawable.ic_duckit_logo), contentDescription = "Duckit Logo", modifier = Modifier.size(200.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_duckit_logo),
+                        contentDescription = stringResource(id = R.string.duckit_logo_content_description),
+                        modifier = Modifier.size(200.dp)
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = { navigationManager.navigate(NavDestination.PostListScreen) }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -82,7 +89,7 @@ fun AuthScreen() {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Welcome to DuckIt!", style = MaterialTheme.typography.headlineMedium)
+            Text(text = stringResource(id = R.string.welcome_message), style = MaterialTheme.typography.headlineMedium)
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -90,16 +97,16 @@ fun AuthScreen() {
                 value = email,
                 onValueChange = {
                     email = it
-                    emailError = if (email.isValidEmail()) null else "Invalid email address"
+                    isEmailError = !email.isValidEmail()
                 },
-                label = { Text("Email") },
+                label = { Text(stringResource(id = R.string.email_label)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 singleLine = true,
-                isError = emailError != null,
+                isError = isEmailError,
                 supportingText = {
-                    emailError?.let {
+                    if (isEmailError) {
                         Text(
-                            it,
+                            text = stringResource(id = R.string.invalid_email_error),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
@@ -112,7 +119,7 @@ fun AuthScreen() {
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text(stringResource(id = R.string.password_label)) },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 singleLine = true,
@@ -132,25 +139,26 @@ fun AuthScreen() {
                             viewModel.logIn(email, password)
                         }
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = isButtonEnabled // Disable button if criteria are not met
                 ) {
-                    Text(text = if (isSignUp) "Sign Up" else "Sign In")
+                    Text(text = if (isSignUp) stringResource(id = R.string.sign_up) else stringResource(id = R.string.sign_in))
                 }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             TextButton(onClick = { isSignUp = !isSignUp }) {
-                Text(text = if (isSignUp) "Already have an account? Sign In" else "Don't have an account? Sign Up")
+                Text(text = if (isSignUp) stringResource(id = R.string.already_have_account) else stringResource(id = R.string.dont_have_account))
             }
 
             if (uiState.error != null) {
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Error: ${uiState.error}", color = Color.Red)
+                Text(text = stringResource(id = R.string.error_prefix) + (uiState.error ?: ""), color = Color.Red)
             }
 
-            if (uiState.authResponse != null) {
-                LaunchedEffect(Unit) {
+            LaunchedEffect(uiState.authResponse) {
+                if (uiState.authResponse != null) {
                     navigationManager.navigate(NavDestination.PostListScreen)
                 }
             }
