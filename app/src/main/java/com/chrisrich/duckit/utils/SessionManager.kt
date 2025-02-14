@@ -1,4 +1,4 @@
-package com.chrisrich.duckit
+package com.chrisrich.duckit.utils
 
 import android.content.Context
 import android.content.SharedPreferences

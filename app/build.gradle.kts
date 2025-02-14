@@ -51,14 +51,16 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
     implementation(libs.koin.android)
-    implementation (libs.koin.androidx.compose) // Koin for Jetpack Compose\
+    implementation(libs.koin.androidx.compose) // Koin for Jetpack Compose\
     implementation(libs.coil.compose)
     implementation(libs.material3)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.accompanist.swiperefresh)
+    implementation (libs.androidx.foundation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

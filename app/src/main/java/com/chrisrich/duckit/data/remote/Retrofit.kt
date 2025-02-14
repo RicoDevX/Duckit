@@ -1,11 +1,13 @@
-package com.chrisrich.duckit.di
+package com.chrisrich.duckit.data.remote
 
-import com.chrisrich.duckit.ApiService
 import okhttp3.OkHttpClient
-import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+
+fun provideDuckitApi(retrofit: Retrofit): DuckitApi {
+    return retrofit.create(DuckitApi::class.java)
+}
 
 fun provideHttpClient(): OkHttpClient {
     return OkHttpClient
@@ -31,13 +33,5 @@ fun provideRetrofit(
         .build()
 }
 
-fun provideService(retrofit: Retrofit): ApiService =
-    retrofit.create(ApiService::class.java)
-
-
-val networkModule= module {
-    single { provideHttpClient() }
-    single { provideConverterFactory() }
-    single { provideRetrofit(get(),get()) }
-    single { provideService(get()) }
-}
+fun provideService(retrofit: Retrofit): DuckitApi =
+    retrofit.create(DuckitApi::class.java)
