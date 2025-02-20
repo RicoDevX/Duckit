@@ -1,3 +1,5 @@
+package com.chrisrich.duckit.ui.screens.auth
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,13 +25,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,26 +37,41 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chrisrich.duckit.R
-import com.chrisrich.duckit.navigation.NavDestination
-import com.chrisrich.duckit.navigation.NavigationManager
-import com.chrisrich.duckit.ui.screens.auth.AuthViewModel
-import com.chrisrich.duckit.utils.isValidEmail
 import org.koin.androidx.compose.koinViewModel
 
+/**
+ * Authentication screen for user login and sign-up.
+ *
+ * This Composable function displays the authentication UI, handling both login and sign-up flows.
+ * It interacts with `AuthViewModel` to manage state updates and user events.
+ *
+ * ## Features:
+ * - Displays input fields for email and password.
+ * - Handles authentication mode toggling between sign-up and login.
+ * - Provides validation for email input (error displayed on loss of focus).
+ * - Displays a loading indicator while authentication is in progress.
+ * - Shows error messages if authentication fails.
+ * - Allows navigation back to the previous screen.
+ *
+ * ## State Management:
+ * - Observes `AuthViewModel.state` using `collectAsStateWithLifecycle()`.
+ * - Updates UI based on `AuthViewState`, including error handling and loading states.
+ *
+ * ## UI Components:
+ * - **TopAppBar**: Displays the app logo and a back navigation button.
+ * - **OutlinedTextField (Email & Password)**: Allows users to enter credentials.
+ * - **Button (Sign In / Sign Up)**: Triggers authentication based on the current mode.
+ * - **TextButton (Toggle Mode)**: Switches between sign-up and login.
+ * - **Error Handling**: Shows validation errors for email and failed authentication attempts.
+ *
+ * @see AuthViewModel
+ * @see AuthEvent
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthScreen() {
     val viewModel: AuthViewModel = koinViewModel()
-    val navigationManager: NavigationManager = koinViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var isSignUp by remember { mutableStateOf(false) }
-    var isEmailError by remember { mutableStateOf(false) }
-
-    // Determine if the button should be enabled
-    val isButtonEnabled = !isEmailError && email.isNotBlank() && password.isNotBlank()
 
     Scaffold(
         topBar = {
@@ -70,8 +84,11 @@ fun AuthScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navigationManager.navigate(NavDestination.PostListScreen) }) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(id = R.string.back))
+                    IconButton(onClick = { viewModel.onEvent(AuthEvent.NavigateBack) }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(id = R.string.back)
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -89,39 +106,46 @@ fun AuthScreen() {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = stringResource(id = R.string.welcome_message), style = MaterialTheme.typography.headlineMedium)
-
+            Text(
+                text = stringResource(id = R.string.welcome_message),
+                style = MaterialTheme.typography.headlineMedium
+            )
             Spacer(modifier = Modifier.height(20.dp))
-
             OutlinedTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                    isEmailError = !email.isValidEmail()
-                },
+                value = uiState.email,
+                onValueChange = { viewModel.onEvent(AuthEvent.UpdateEmail(it)) },
                 label = { Text(stringResource(id = R.string.email_label)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = androidx.compose.ui.text.input.ImeAction.Next
+                ),
                 singleLine = true,
-                isError = isEmailError,
+                isError = uiState.shouldShowEmailError(),
                 supportingText = {
-                    if (isEmailError) {
+                    if (uiState.shouldShowEmailError()) {
                         Text(
                             text = stringResource(id = R.string.invalid_email_error),
                             color = MaterialTheme.colorScheme.error
                         )
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        if (!focusState.isFocused) viewModel.onEvent(AuthEvent.EmailLostFocus)
+                    }
             )
-
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = uiState.password,
+                onValueChange = { viewModel.onEvent(AuthEvent.UpdatePassword(it)) },
                 label = { Text(stringResource(id = R.string.password_label)) },
                 visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = androidx.compose.ui.text.input.ImeAction.Next
+                ),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -133,34 +157,35 @@ fun AuthScreen() {
             } else {
                 Button(
                     onClick = {
-                        if (isSignUp) {
-                            viewModel.signUp(email, password)
-                        } else {
-                            viewModel.logIn(email, password)
-                        }
+                        viewModel.onEvent(if (uiState.isSignUp) AuthEvent.SignUp else AuthEvent.LogIn)
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = isButtonEnabled // Disable button if criteria are not met
+                    enabled = !uiState.isEmailError && uiState.email.isNotBlank() && uiState.password.isNotBlank()
                 ) {
-                    Text(text = if (isSignUp) stringResource(id = R.string.sign_up) else stringResource(id = R.string.sign_in))
+                    Text(
+                        text = if (uiState.isSignUp) stringResource(id = R.string.sign_up) else stringResource(
+                            id = R.string.sign_in
+                        )
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            TextButton(onClick = { isSignUp = !isSignUp }) {
-                Text(text = if (isSignUp) stringResource(id = R.string.already_have_account) else stringResource(id = R.string.dont_have_account))
+            TextButton(onClick = { viewModel.onEvent(AuthEvent.ToggleAuthMode) }) {
+                Text(
+                    text = if (uiState.isSignUp) stringResource(id = R.string.already_have_account) else stringResource(
+                        id = R.string.dont_have_account
+                    )
+                )
             }
 
             if (uiState.error != null) {
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = stringResource(id = R.string.error_prefix) + (uiState.error ?: ""), color = Color.Red)
-            }
-
-            LaunchedEffect(uiState.authResponse) {
-                if (uiState.authResponse != null) {
-                    navigationManager.navigate(NavDestination.PostListScreen)
-                }
+                Text(
+                    text = stringResource(id = R.string.error_prefix) + (uiState.error ?: ""),
+                    color = Color.Red
+                )
             }
         }
     }

@@ -53,5 +53,5 @@ val duckItModule = module {
 
     // Provide ViewModels
     viewModel { PostListViewModel(get(), get(),get(), get()) }
-    viewModel { AuthViewModel(get(), get(), get()) }
+    viewModel { AuthViewModel(get(), get(), get(), get()) }
 }
