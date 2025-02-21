@@ -1,5 +1,3 @@
-
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +42,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 @Composable
-fun PostItem(post: Post, onShowLoginPrompt: () -> Unit) {
+fun PostItem(post: Post, onShowLoginPrompt: () -> Unit, onImageLoadFailure: (String) -> Unit) {
     val sessionManager: SessionManager = koinInject()
     val viewModel: PostListViewModel = koinInject()
     val coroutineScope = rememberCoroutineScope()
@@ -73,6 +69,9 @@ fun PostItem(post: Post, onShowLoginPrompt: () -> Unit) {
                         if (width > 0 && height > 0) {
                             imageAspectRatio = width.toFloat() / height.toFloat()
                         }
+                    },
+                    onError = { _, _ ->
+                        onImageLoadFailure(post.id) // Notify ViewModel on failure
                     }
                 )
                 .build(),
@@ -83,125 +82,115 @@ fun PostItem(post: Post, onShowLoginPrompt: () -> Unit) {
             onState = { state -> imageState = state }
         )
 
-        // Placeholder image if network fails
-        if (imageState is AsyncImagePainter.State.Error) {
-            Image(
-                painter = painterResource(id = R.drawable.img_photo_not_found),
-                contentDescription = stringResource(R.string.duck_not_found),
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-    }
-
-    // Enlarged Image Dialog with Title Bar and Voting Controls
-    if (showDialog) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            confirmButton = { },
-            text = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Title Bar with Close Button
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = post.headline, fontSize = 18.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
-                            Text(text = stringResource(R.string.by, post.author), fontSize = 14.sp, color = Color.Gray)
-                        }
-                        IconButton(onClick = { showDialog = false }) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = stringResource(R.string.close),
-                                tint = Color.Black
-                            )
-                        }
-                    }
-
-                    // Enlarged Image
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(post.image)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = stringResource(R.string.full_screen_duck_image),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(imageAspectRatio)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Upvote/Downvote Buttons with Vote Count in the Middle
-                    Row(
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                confirmButton = { },
+                text = {
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Upvote Button
-                        IconButton(
-                            onClick = {
-                                val authToken = sessionManager.getAuthToken()
-                                if (authToken != null) {
-                                    localUpvotes += 1 // Optimistically update UI
-                                    coroutineScope.launch {
-                                        viewModel.upvotePost(post.id) { updatedVotes ->
-                                            localUpvotes = updatedVotes
-                                        }
-                                    }
-                                } else {
-                                    onShowLoginPrompt()
-                                }
-                            }
+                        // Title Bar with Close Button
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowUp,
-                                contentDescription = stringResource(R.string.upvote),
-                                tint = Color.Black
-                            )
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(text = post.headline, fontSize = 18.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Bold)
+                                Text(text = stringResource(R.string.by, post.author), fontSize = 14.sp, color = Color.Gray)
+                            }
+                            IconButton(onClick = { showDialog = false }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = stringResource(R.string.close),
+                                    tint = Color.Black
+                                )
+                            }
                         }
 
-                        // Vote Count Display (Centered)
-                        Text(
-                            text = "$localUpvotes",
-                            fontSize = 18.sp,
-                            color = Color.Black,
-                            modifier = Modifier.padding(horizontal = 16.dp) // Ensures proper spacing
+                        // Enlarged Image
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(post.image)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = stringResource(R.string.full_screen_duck_image),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(imageAspectRatio)
                         )
 
-                        // Downvote Button
-                        IconButton(
-                            onClick = {
-                                val authToken = sessionManager.getAuthToken()
-                                if (authToken != null) {
-                                    localUpvotes -= 1 // Optimistically update UI
-                                    coroutineScope.launch {
-                                        viewModel.downvotePost(post.id) { updatedVotes ->
-                                            localUpvotes = updatedVotes
-                                        }
-                                    }
-                                } else {
-                                    onShowLoginPrompt()
-                                }
-                            }
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Upvote/Downvote Buttons with Vote Count in the Middle
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = stringResource(R.string.down_vote),
-                                tint = Color.Black
+                            // Upvote Button
+                            IconButton(
+                                onClick = {
+                                    val authToken = sessionManager.getAuthToken()
+                                    if (authToken != null) {
+                                        localUpvotes += 1 // Optimistically update UI
+                                        coroutineScope.launch {
+                                            viewModel.upvotePost(post.id) { updatedVotes ->
+                                                localUpvotes = updatedVotes
+                                            }
+                                        }
+                                    } else {
+                                        onShowLoginPrompt()
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowUp,
+                                    contentDescription = stringResource(R.string.upvote),
+                                    tint = Color.Black
+                                )
+                            }
+
+                            // Vote Count Display (Centered)
+                            Text(
+                                text = "$localUpvotes",
+                                fontSize = 18.sp,
+                                color = Color.Black,
+                                modifier = Modifier.padding(horizontal = 16.dp) // Ensures proper spacing
                             )
+
+                            // Downvote Button
+                            IconButton(
+                                onClick = {
+                                    val authToken = sessionManager.getAuthToken()
+                                    if (authToken != null) {
+                                        localUpvotes -= 1 // Optimistically update UI
+                                        coroutineScope.launch {
+                                            viewModel.downvotePost(post.id) { updatedVotes ->
+                                                localUpvotes = updatedVotes
+                                            }
+                                        }
+                                    } else {
+                                        onShowLoginPrompt()
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowDown,
+                                    contentDescription = stringResource(R.string.down_vote),
+                                    tint = Color.Black
+                                )
+                            }
                         }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }

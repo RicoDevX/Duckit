@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,7 +15,8 @@ import com.chrisrich.duckit.domain.model.Post
 @Composable
 fun PostGallery(
     posts: List<Post>,
-    onShowLoginPrompt: () -> Unit
+    onShowLoginPrompt: () -> Unit,
+    onRemovePost: (String) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -29,7 +29,7 @@ fun PostGallery(
             contentPadding = PaddingValues(8.dp)
         ) {
             items(posts) { post ->
-                PostItem(post = post, onShowLoginPrompt)
+                PostItem(post = post, onShowLoginPrompt, onImageLoadFailure = onRemovePost)
             }
         }
 
@@ -42,5 +42,6 @@ fun PostGallery(
                 CircularProgressIndicator()
             }
         }
+
     }
 }

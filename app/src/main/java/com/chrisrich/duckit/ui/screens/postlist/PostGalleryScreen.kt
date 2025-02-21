@@ -87,7 +87,8 @@ fun PostListScreen() {
 
                 else -> PostGallery (
                     posts = uiState.posts ?: emptyList(),
-                    onShowLoginPrompt = { showLoginPrompt = true }
+                    onShowLoginPrompt = { showLoginPrompt = true },
+                    onRemovePost = { postId -> viewModel.removePost(postId) }
                 )
             }
         }

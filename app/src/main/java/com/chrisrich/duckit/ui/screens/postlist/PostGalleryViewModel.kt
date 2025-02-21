@@ -92,4 +92,11 @@ class PostListViewModel(
             }
         }
     }
+
+    fun removePost(postId: String) {
+        _state.update { currentState ->
+            val updatedPosts = currentState.posts?.filterNot { it.id == postId }
+            currentState.copy(posts = updatedPosts)
+        }
+    }
 }
