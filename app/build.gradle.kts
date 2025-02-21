@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.accompanist.swiperefresh)
     implementation (libs.androidx.foundation)
     implementation(libs.androidx.ui.test.junit4.android)
+    implementation (libs.androidx.security.crypto)
 
     testImplementation(libs.junit)
     testImplementation (libs.robolectric)

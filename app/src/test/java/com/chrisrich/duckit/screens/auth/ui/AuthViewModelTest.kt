@@ -46,7 +46,6 @@ class AuthViewModelTest {
 
     private lateinit var viewModel: AuthViewModel
 
-    // Standard Test Dispatcher
     private val testDispatcher = StandardTestDispatcher()
 
     @Before
