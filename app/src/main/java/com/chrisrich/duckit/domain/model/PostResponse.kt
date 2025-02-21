@@ -1,3 +1,5 @@
 package com.chrisrich.duckit.domain.model
 
-data class PostResponse(val Posts: List<Post>)
+import com.google.gson.annotations.SerializedName
+
+data class PostResponse(@SerializedName("Posts") val posts: List<Post>)
