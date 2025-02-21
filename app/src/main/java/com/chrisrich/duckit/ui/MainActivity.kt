@@ -1,5 +1,6 @@
 package com.chrisrich.duckit.ui
 
+import SetupNavGraph
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
 import com.chrisrich.duckit.navigation.NavDestination
 import com.chrisrich.duckit.navigation.NavigationManager
-import com.chrisrich.duckit.navigation.SetupNavGraph
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -24,10 +24,9 @@ class MainActivity : ComponentActivity() {
 
             SetupNavGraph(navController)
 
-            // Observe navigation changes
             LaunchedEffect(currentDestination) {
                 navController.navigate(currentDestination.route) {
-                    popUpTo(NavDestination.PostListScreen.route) { inclusive = false }
+                    popUpTo(NavDestination.PostGalleryScreen.route) { inclusive = false }
                 }
             }
         }

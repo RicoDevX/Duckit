@@ -18,6 +18,7 @@ import com.chrisrich.duckit.domain.model.AuthResponse
  * - `isEmailError`: Tracks whether the entered email is invalid.
  * - `showEmailError`: Ensures the email error message is only shown when appropriate.
  * - `isEmailFocused`: Tracks whether the email input field is currently focused.
+ * - `isAuthenticated`: Indicates whether the user has been successfully authenticated.
  *
  * This state is observed in `AuthScreen` to dynamically update the UI.
  */
@@ -30,19 +31,20 @@ data class AuthViewState(
     val isSignUp: Boolean = false,
     val isEmailError: Boolean = false,
     val showEmailError: Boolean = false,
-    val isEmailFocused: Boolean = false
+    val isEmailFocused: Boolean = false,
+    val isAuthenticated: Boolean = false
 ) {
-    /**
-     * Determines whether the email error message should be displayed.
-     *
-     * This function checks multiple conditions to decide if the email error should be shown:
-     * - `isEmailError`: Indicates if the email is invalid.
-     * - `!isEmailFocused`: Ensures the error is shown only when the email input field is not focused.
-     * - `showEmailError`: Prevents showing the error until validation has been triggered (e.g., after losing focus).
-     *
-     * @return `true` if the email error should be displayed, otherwise `false`.
-     */
-    fun shouldShowEmailError(): Boolean {
-        return isEmailError && !isEmailFocused && showEmailError
-    }
+//    /**
+//     * Determines whether the email error message should be displayed.
+//     *
+//     * This function checks multiple conditions to decide if the email error should be shown:
+//     * - `isEmailError`: Indicates if the email is invalid.
+//     * - `!isEmailFocused`: Ensures the error is shown only when the email input field is not focused.
+//     * - `showEmailError`: Prevents showing the error until validation has been triggered (e.g., after losing focus).
+//     *
+//     * @return `true` if the email error should be displayed, otherwise `false`.
+//     */
+//    fun shouldShowEmailError(): Boolean {
+//        return isEmailError && !isEmailFocused && showEmailError
+//    }
 }

@@ -1,4 +1,4 @@
-package com.chrisrich.duckit.domain.usecase.post
+package com.chrisrich.duckit.domain.usecase.newpost
 
 import com.chrisrich.duckit.data.repository.PostRepository
 import com.chrisrich.duckit.domain.model.NewPostRequest

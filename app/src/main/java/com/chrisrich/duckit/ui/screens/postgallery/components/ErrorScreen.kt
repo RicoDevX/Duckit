@@ -1,4 +1,4 @@
-package com.chrisrich.duckit.ui.screens.postlist.components
+package com.chrisrich.duckit.ui.screens.postgallery.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

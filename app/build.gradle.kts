@@ -64,9 +64,9 @@ dependencies {
     implementation(libs.koin.androidx.compose) // Koin for Jetpack Compose\
     implementation(libs.coil.compose)
     implementation(libs.material3)
+    implementation (libs.androidx.material)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.accompanist.swiperefresh)
     implementation (libs.androidx.foundation)
     implementation(libs.androidx.ui.test.junit4.android)
     implementation (libs.androidx.security.crypto)
@@ -85,6 +85,7 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation (libs.ui.test.junit4)
+
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

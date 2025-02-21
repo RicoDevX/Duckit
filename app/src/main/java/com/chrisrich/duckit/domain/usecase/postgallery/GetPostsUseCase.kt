@@ -1,4 +1,4 @@
-package com.chrisrich.duckit.domain.usecase.postlist
+package com.chrisrich.duckit.domain.usecase.postgallery
 
 import com.chrisrich.duckit.data.repository.PostRepository
 import com.chrisrich.duckit.domain.model.PostListResponse

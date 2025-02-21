@@ -1,4 +1,3 @@
-package com.chrisrich.duckit.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -7,8 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.chrisrich.duckit.navigation.NavDestination
+import com.chrisrich.duckit.navigation.NavigationManager
 import com.chrisrich.duckit.ui.screens.auth.AuthScreen
-import com.chrisrich.duckit.ui.screens.postlist.PostListScreen
+import com.chrisrich.duckit.ui.screens.postgallery.PostGalleryScreen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -16,18 +17,33 @@ fun SetupNavGraph(navController: NavHostController) {
     val navigationManager: NavigationManager = koinViewModel()
     val currentDestination by navigationManager.currentDestination.collectAsState()
 
-    NavHost(navController = navController, startDestination = NavDestination.PostListScreen.route) {
-        composable(NavDestination.PostListScreen.route) {
-            PostListScreen()
+    NavHost(
+        navController = navController,
+        startDestination = NavDestination.PostGalleryScreen.route
+    ) {
+        composable(NavDestination.PostGalleryScreen.route) {
+            PostGalleryScreen()
         }
+
         composable(NavDestination.AuthScreen.route) {
-            AuthScreen()
+            AuthScreen(
+                onNavigateBack = {
+                    navigationManager.navigateBack()
+                }
+            )
+        }
+
+        composable(NavDestination.NewPostScreen.route) {
+            NewPostScreen(
+                onNavigateBack = { navigationManager.navigateBack() }
+            )
         }
     }
 
+    // Observe navigation changes and move the navController accordingly
     LaunchedEffect(currentDestination) {
         navController.navigate(currentDestination.route) {
-            popUpTo(NavDestination.PostListScreen.route) { inclusive = false }
+            popUpTo(NavDestination.PostGalleryScreen.route) { inclusive = false }
         }
     }
 }
