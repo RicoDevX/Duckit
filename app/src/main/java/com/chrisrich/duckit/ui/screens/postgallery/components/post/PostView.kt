@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
@@ -104,7 +105,7 @@ fun PostItem(
                     }
                     IconButton(onClick = { viewModel.dismissPostDialog() }) {
                         Icon(
-                            imageVector = Icons.Default.KeyboardArrowUp,
+                            imageVector = Icons.Default.Close,
                             contentDescription = stringResource(R.string.close),
                             tint = MaterialTheme.colorScheme.onSurface
                         )
@@ -136,7 +137,6 @@ fun PostItem(
                     ) {
                         IconButton(
                             onClick = {
-                                viewModel.dismissPostDialog()
                                 viewModel.onVoteClicked(post.id, true)
                             }
                         ) {
@@ -156,7 +156,6 @@ fun PostItem(
 
                         IconButton(
                             onClick = {
-                                viewModel.dismissPostDialog()
                                 viewModel.onVoteClicked(post.id, false)
                             }
                         ) {

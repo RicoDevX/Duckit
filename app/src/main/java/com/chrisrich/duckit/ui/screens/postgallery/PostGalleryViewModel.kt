@@ -82,6 +82,7 @@ class PostGalleryViewModel(
         _selectedPost.value = null
     }
 
+    @Suppress("SameParameterValue")
     private fun upvote(postId: String, token: String) {
         viewModelScope.launch {
             updatePostState(postId, isLoading = true)
@@ -103,6 +104,7 @@ class PostGalleryViewModel(
         }
     }
 
+    @Suppress("SameParameterValue")
     private fun downvote(postId: String, token: String) {
         viewModelScope.launch {
             updatePostState(postId, isLoading = true)
@@ -138,7 +140,7 @@ class PostGalleryViewModel(
         error: String? = null
     ) {
         _state.update { state ->
-            state.copy(posts = state.posts.map {
+            val updatedPosts = state.posts.map {
                 if (it.id == postId) {
                     it.copy(
                         votes = votes ?: it.votes,
@@ -146,8 +148,15 @@ class PostGalleryViewModel(
                         error = error
                     )
                 } else it
-            })
+            }
+            state.copy(posts = updatedPosts)
         }
+
+        _selectedPost.value = _selectedPost.value?.copy(
+            votes = votes ?: _selectedPost.value?.votes ?: 0,
+            isLoading = isLoading ?: _selectedPost.value?.isLoading ?: false,
+            error = error
+        )
     }
 
     fun onFabClicked() {
@@ -162,8 +171,6 @@ class PostGalleryViewModel(
     }
 
     fun onVoteClicked(postId: String, isUpvote: Boolean) {
-        dismissPostDialog()
-
         val token = sessionManager.getAuthToken()
         _isLoggedIn.value = token != null
 
@@ -173,7 +180,10 @@ class PostGalleryViewModel(
             return
         }
 
-        if (isUpvote) upvote(postId, token) else downvote(postId, token)
+        if (isUpvote) upvote(postId, "user_token") else downvote(
+            postId,
+            "user_token"
+        )//TODO: Replace with token once Service is fixed
     }
 
     fun navigateToSignIn() {
