@@ -1,5 +1,7 @@
 package com.chrisrich.duckit.di
 
+import DefaultEmailValidator
+import EmailValidator
 import PostGalleryViewModel
 import com.chrisrich.duckit.data.remote.provideConverterFactory
 import com.chrisrich.duckit.data.remote.provideDuckitApi
@@ -31,6 +33,9 @@ val duckItModule = module {
     // Provides Navigation Manager
     single { NavigationManager() }
 
+    // Register EmailValidator as a singleton
+    single<EmailValidator> { DefaultEmailValidator }
+
     // Provide Retrofit instance
     single { provideHttpClient() }
     single { provideConverterFactory() }
@@ -38,7 +43,7 @@ val duckItModule = module {
     single { provideService(get()) }
 
     // Provide DuckitApi
-    single { provideDuckitApi(get()) } // Pass the Retrofit instance
+    single { provideDuckitApi(get()) }
 
     // Provide SessionManager
     single { SessionManager(get()) }
@@ -59,6 +64,6 @@ val duckItModule = module {
 
     // Provide ViewModels
     viewModel { PostGalleryViewModel(get(), get(), get(), get(), get()) }
-    viewModel { AuthViewModel(get(), get(), get(), get()) }
+    viewModel { AuthViewModel(get(), get(), get(), get(), get()) }
     viewModel { NewPostViewModel(get(), get(), get()) }
 }

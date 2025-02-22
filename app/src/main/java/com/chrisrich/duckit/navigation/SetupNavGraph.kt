@@ -8,7 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.chrisrich.duckit.navigation.NavDestination
 import com.chrisrich.duckit.navigation.NavigationManager
-import com.chrisrich.duckit.ui.screens.auth.AuthScreen
 import com.chrisrich.duckit.ui.screens.postgallery.PostGalleryScreen
 import org.koin.androidx.compose.koinViewModel
 
@@ -40,7 +39,6 @@ fun SetupNavGraph(navController: NavHostController) {
         }
     }
 
-    // Observe navigation changes and move the navController accordingly
     LaunchedEffect(currentDestination) {
         navController.navigate(currentDestination.route) {
             popUpTo(NavDestination.PostGalleryScreen.route) { inclusive = false }

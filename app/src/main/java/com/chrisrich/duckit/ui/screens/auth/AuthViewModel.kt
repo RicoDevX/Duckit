@@ -1,5 +1,6 @@
 package com.chrisrich.duckit.ui.screens.auth
 
+import EmailValidator
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chrisrich.duckit.domain.model.AuthRequest
@@ -17,7 +18,8 @@ class AuthViewModel(
     private val logInUseCase: LogInUseCase,
     private val signUpUseCase: SignUpUseCase,
     private val sessionManager: SessionManager,
-    private val navigationManager: NavigationManager
+    private val navigationManager: NavigationManager,
+    private val emailValidator: EmailValidator
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AuthViewState())
@@ -25,10 +27,30 @@ class AuthViewModel(
 
     fun onEvent(event: AuthEvent) {
         when (event) {
-            is AuthEvent.UpdateEmail -> _state.update { it.copy(email = event.email) }
+            is AuthEvent.UpdateEmail -> {
+                _state.update {
+                    it.copy(
+                        email = event.email,
+                        isEmailFocused = true,
+                        showEmailError = false
+                    )
+                }
+            }
+
+            is AuthEvent.EmailLostFocus -> {
+                val email = _state.value.email
+                val isEmailValid = email.isEmpty() || emailValidator.isValid(email)
+                _state.update {
+                    it.copy(
+                        isEmailFocused = false,
+                        isEmailError = email.isNotEmpty() && !isEmailValid,
+                        showEmailError = email.isNotEmpty() && !isEmailValid
+                    )
+                }
+            }
+
             is AuthEvent.UpdatePassword -> _state.update { it.copy(password = event.password) }
             is AuthEvent.ToggleAuthMode -> _state.update { it.copy(isSignUp = !it.isSignUp) }
-            is AuthEvent.EmailLostFocus -> validateEmail()
             is AuthEvent.LogIn -> authenticateUser(isSignUp = false)
             is AuthEvent.SignUp -> authenticateUser(isSignUp = true)
             is AuthEvent.NavigateBack -> navigationManager.navigateBack()
@@ -62,11 +84,5 @@ class AuthViewModel(
                 )
             }
         }
-    }
-
-    private fun validateEmail() {
-        val email = _state.value.email
-        val isValid = email.contains("@") && email.contains(".")
-        _state.update { it.copy(isEmailError = !isValid) }
     }
 }
