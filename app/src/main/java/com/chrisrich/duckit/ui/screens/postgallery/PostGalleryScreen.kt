@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chrisrich.duckit.R
 import com.chrisrich.duckit.ui.screens.postgallery.components.ErrorScreen
-import com.chrisrich.duckit.ui.screens.postgallery.components.LoadingScreen
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -102,17 +101,16 @@ fun PostGalleryScreen() {
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .pullRefresh(pullRefreshState) // 🔄 Enables pull-to-refresh
+                .pullRefresh(pullRefreshState)
         ) {
             when {
-                uiState.isLoading && uiState.posts.isEmpty() -> LoadingScreen()
-                uiState.error != null || uiState.posts.isEmpty() -> ErrorScreen(
-                    uiState.error ?: stringResource(R.string.no_posts_found)
-                )
+                uiState.error != null -> {
+                    ErrorScreen(uiState.error ?: stringResource(R.string.no_posts_found))
+                }
 
-                else -> {
+                uiState.posts.isNotEmpty() -> {
                     LazyVerticalStaggeredGrid(
-                        columns = StaggeredGridCells.Adaptive(150.dp), // 📸 Gallery layout
+                        columns = StaggeredGridCells.Adaptive(150.dp),
                         modifier = Modifier.fillMaxSize(),
                         verticalItemSpacing = 8.dp,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -132,7 +130,7 @@ fun PostGalleryScreen() {
             PullRefreshIndicator(
                 refreshing = uiState.isLoading,
                 state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
+                modifier = Modifier.align(Alignment.Center)
             )
         }
     }

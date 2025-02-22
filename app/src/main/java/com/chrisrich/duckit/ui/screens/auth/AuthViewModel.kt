@@ -76,7 +76,7 @@ class AuthViewModel(
                         sessionManager.saveAuthToken(response.token)
                         _state.update { it.copy(isLoading = false, isAuthenticated = true) }
 
-                        navigationManager.navigateBack() // ✅ FIXED: Now correctly navigates back
+                        navigationManager.navigateBack()
                     },
                     onFailure = { error ->
                         _state.update { it.copy(isLoading = false, error = error.message ?: "Authentication failed") }
