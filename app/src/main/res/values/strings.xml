@@ -33,5 +33,6 @@
     <string name="headline">Post a duck</string>
     <string name="already_have_an_account_sign_in">Already have an account? Sign In</string>
     <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
+    <string name="vote_on_this_post">Vote for this post!</string>
 
 </resources>
