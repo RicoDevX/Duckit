@@ -36,13 +36,16 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AuthScreen(
-    onNavigateBack: () -> Unit
+    viewModel: AuthViewModel = koinViewModel()
 ) {
-    val viewModel: AuthViewModel = koinViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { AppTopBar(showBackButton = true, onBackClick = onNavigateBack) }
+        topBar = {
+            AppTopBar(
+                showBackButton = true,
+                onBackClick = { viewModel.onEvent(AuthEvent.NavigateBack) })
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -131,7 +134,7 @@ fun AuthScreen(
                     CircularProgressIndicator()
                 } else {
                     Button(
-                        onClick = { viewModel.onEvent(if (uiState.isSignUp) AuthEvent.SignUp else AuthEvent.LogIn) },
+                        onClick = { viewModel.onEvent(AuthEvent.Authenticate(uiState.isSignUp)) },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = uiState.email.isNotBlank() && uiState.password.isNotBlank() && !uiState.isEmailError
                     ) {

@@ -132,7 +132,7 @@ fun PostGalleryScreen() {
             PullRefreshIndicator(
                 refreshing = uiState.isLoading,
                 state = pullRefreshState,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.TopCenter)
             )
         }
     }

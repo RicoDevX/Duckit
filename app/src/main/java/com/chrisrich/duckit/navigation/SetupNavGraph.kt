@@ -25,11 +25,7 @@ fun SetupNavGraph(navController: NavHostController) {
         }
 
         composable(NavDestination.AuthScreen.route) {
-            AuthScreen(
-                onNavigateBack = {
-                    navigationManager.navigateBack()
-                }
-            )
+            AuthScreen()
         }
 
         composable(NavDestination.NewPostScreen.route) {

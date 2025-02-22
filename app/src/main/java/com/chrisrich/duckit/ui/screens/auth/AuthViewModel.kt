@@ -51,8 +51,7 @@ class AuthViewModel(
 
             is AuthEvent.UpdatePassword -> _state.update { it.copy(password = event.password) }
             is AuthEvent.ToggleAuthMode -> _state.update { it.copy(isSignUp = !it.isSignUp) }
-            is AuthEvent.LogIn -> authenticateUser(isSignUp = false)
-            is AuthEvent.SignUp -> authenticateUser(isSignUp = true)
+            is AuthEvent.Authenticate -> authenticateUser(event.isSignUp)
             is AuthEvent.NavigateBack -> navigationManager.navigateBack()
         }
     }
