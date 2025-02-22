@@ -70,6 +70,7 @@ dependencies {
     implementation (libs.androidx.foundation)
     implementation(libs.androidx.ui.test.junit4.android)
     implementation (libs.androidx.security.crypto)
+    implementation(libs.konfetti.compose)
 
     testImplementation(libs.junit)
     testImplementation (libs.robolectric)

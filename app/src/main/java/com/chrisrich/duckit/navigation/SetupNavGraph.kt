@@ -29,9 +29,7 @@ fun SetupNavGraph(navController: NavHostController) {
         }
 
         composable(NavDestination.NewPostScreen.route) {
-            NewPostScreen(
-                onNavigateBack = { navigationManager.navigateBack() }
-            )
+            NewPostScreen()
         }
     }
 

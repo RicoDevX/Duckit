@@ -82,11 +82,10 @@ fun AuthScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Email Input
                 OutlinedTextField(
                     value = uiState.email,
                     onValueChange = { viewModel.onEvent(AuthEvent.UpdateEmail(it)) },
-                    label = { Text("Email") },
+                    label = { Text(stringResource(R.string.email)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
@@ -114,11 +113,10 @@ fun AuthScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Password Input
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = { viewModel.onEvent(AuthEvent.UpdatePassword(it)) },
-                    label = { Text("Password") },
+                    label = { Text(stringResource(R.string.password)) },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,

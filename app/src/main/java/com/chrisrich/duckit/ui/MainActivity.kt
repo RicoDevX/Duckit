@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
 import com.chrisrich.duckit.navigation.NavDestination
 import com.chrisrich.duckit.navigation.NavigationManager
+import com.chrisrich.duckit.ui.theme.DuckItTheme
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -18,15 +19,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val navController = rememberNavController()
-            val navigationManager: NavigationManager = koinViewModel()
-            val currentDestination by navigationManager.currentDestination.collectAsState()
+            DuckItTheme {
+                val navController = rememberNavController()
+                val navigationManager: NavigationManager = koinViewModel()
+                val currentDestination by navigationManager.currentDestination.collectAsState()
 
-            SetupNavGraph(navController)
+                SetupNavGraph(navController)
 
-            LaunchedEffect(currentDestination) {
-                navController.navigate(currentDestination.route) {
-                    popUpTo(NavDestination.PostGalleryScreen.route) { inclusive = false }
+                LaunchedEffect(currentDestination) {
+                    navController.navigate(currentDestination.route) {
+                        popUpTo(NavDestination.PostGalleryScreen.route) { inclusive = false }
+                    }
                 }
             }
         }
