@@ -1,7 +1,5 @@
 package com.chrisrich.duckit.ui.screens.postgallery
 
-import PostGalleryViewModel
-import PostItem
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,18 +41,13 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun PostGalleryScreen() {
-    val viewModel: PostGalleryViewModel = koinViewModel()
+fun PostGalleryScreen(viewModel: PostGalleryViewModel = koinViewModel()) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val showLoginPrompt by viewModel.showLoginPrompt.collectAsStateWithLifecycle()
-    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
-    val loginReason by viewModel.loginReason.collectAsStateWithLifecycle()
 
     val topBarColor = Color(0xFF45C066)
-
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isLoading,
-        onRefresh = { viewModel.getPostList() }
+        onRefresh = { viewModel.onEvent(PostGalleryEvent.RefreshPostList) }
     )
 
     Scaffold(
@@ -70,13 +63,11 @@ fun PostGalleryScreen() {
                 actions = {
                     TextButton(
                         onClick = {
-                            if (isLoggedIn) viewModel.logOut() else viewModel.navigateToSignIn()
+                            if (uiState.isLoggedIn) viewModel.logOut() else viewModel.onEvent(PostGalleryEvent.NavigateToSignIn)
                         }
                     ) {
                         Text(
-                            text = if (isLoggedIn) stringResource(R.string.log_out) else stringResource(
-                                R.string.sign_in
-                            ),
+                            text = if (uiState.isLoggedIn) stringResource(R.string.log_out) else stringResource(R.string.sign_in),
                             color = Color.White
                         )
                     }
@@ -89,7 +80,7 @@ fun PostGalleryScreen() {
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { viewModel.onFabClicked() },
+                onClick = { viewModel.onEvent(PostGalleryEvent.FabClicked) },
                 containerColor = topBarColor,
                 contentColor = Color.White
             ) {
@@ -120,9 +111,7 @@ fun PostGalleryScreen() {
                             PostItem(
                                 modifier = Modifier.animateItem(),
                                 post = post,
-                                viewModel = viewModel,
-                                onImageLoadFailure = { postId -> viewModel.removePost(postId)
-                                }
+                                onEvent = { event -> viewModel.onEvent(event) }
                             )
                         }
                     }
@@ -137,25 +126,33 @@ fun PostGalleryScreen() {
         }
     }
 
-    if (showLoginPrompt) {
+    // 🔥 Show Post Dialog if a post is selected
+    uiState.selectedPostId?.let { postId ->
+        uiState.posts.find { it.id == postId }?.let { post ->
+            PostDetailDialog(post = post, onDismiss = { viewModel.onEvent(PostGalleryEvent.DismissPostDialog) }, onVote = { isUpvote ->
+                viewModel.onEvent(PostGalleryEvent.VotePost(post.id, isUpvote))
+            })
+        }
+    }
+
+    // 🔥 Show Login Prompt if needed
+    if (uiState.showLoginPrompt) {
         AlertDialog(
-            onDismissRequest = { viewModel.dismissLoginPrompt() },
+            onDismissRequest = { viewModel.onEvent(PostGalleryEvent.DismissLoginPrompt) },
             title = { Text(stringResource(R.string.login_required)) },
-            text = { Text(stringResource(loginReason)) },
+            text = { Text(stringResource(uiState.loginReason)) },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.dismissLoginPrompt()
-                        viewModel.navigateToSignIn()
+                        viewModel.onEvent(PostGalleryEvent.DismissLoginPrompt)
+                        viewModel.onEvent(PostGalleryEvent.NavigateToSignIn)
                     }
                 ) {
                     Text(stringResource(R.string.sign_in))
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = { viewModel.dismissLoginPrompt() }
-                ) {
+                TextButton(onClick = { viewModel.onEvent(PostGalleryEvent.DismissLoginPrompt) }) {
                     Text(stringResource(R.string.cancel))
                 }
             }

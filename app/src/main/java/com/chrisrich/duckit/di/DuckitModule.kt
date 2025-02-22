@@ -2,7 +2,6 @@ package com.chrisrich.duckit.di
 
 import DefaultEmailValidator
 import EmailValidator
-import PostGalleryViewModel
 import com.chrisrich.duckit.data.remote.provideConverterFactory
 import com.chrisrich.duckit.data.remote.provideDuckitApi
 import com.chrisrich.duckit.data.remote.provideHttpClient
@@ -19,6 +18,7 @@ import com.chrisrich.duckit.domain.usecase.postgallery.UpvotePostUseCase
 import com.chrisrich.duckit.navigation.NavigationManager
 import com.chrisrich.duckit.ui.screens.auth.AuthViewModel
 import com.chrisrich.duckit.ui.screens.newpost.NewPostViewModel
+import com.chrisrich.duckit.ui.screens.postgallery.PostGalleryViewModel
 import com.chrisrich.duckit.utils.SessionManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -27,7 +27,7 @@ import org.koin.dsl.module
 
 val duckItModule = module {
 
-// ✅ Provide Secure SessionManager
+    //Provide Secure SessionManager
     single { SessionManager(androidContext()) }
 
     // Provides Navigation Manager
