@@ -118,9 +118,11 @@ fun PostGalleryScreen() {
                     ) {
                         items(uiState.posts) { post ->
                             PostItem(
+                                modifier = Modifier.animateItem(),
                                 post = post,
                                 viewModel = viewModel,
-                                onImageLoadFailure = { postId -> viewModel.removePost(postId) }
+                                onImageLoadFailure = { postId -> viewModel.removePost(postId)
+                                }
                             )
                         }
                     }

@@ -37,6 +37,7 @@ import com.chrisrich.duckit.ui.screens.postgallery.components.post.PostViewState
 
 @Composable
 fun PostItem(
+    modifier: Modifier = Modifier,
     post: PostViewState,
     viewModel: PostGalleryViewModel,
     onImageLoadFailure: (String) -> Unit
@@ -48,7 +49,7 @@ fun PostItem(
     var imageAspectRatio by remember { mutableFloatStateOf(1f) }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(4.dp)
             .clickable { viewModel.showPostDialog(post) }
     ) {
@@ -83,7 +84,9 @@ fun PostItem(
             confirmButton = {},
             title = {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
