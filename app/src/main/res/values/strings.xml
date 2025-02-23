@@ -34,5 +34,17 @@
     <string name="already_have_an_account_sign_in">Already have an account? Sign In</string>
     <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
     <string name="vote_on_this_post">Vote for this post!</string>
+    <string name="authentication_required">Authentication required</string>
+    <string name="ensure_the_headline_is_filled_and_the_image_has_loaded_successfully">Ensure the headline is filled and the image has loaded successfully.</string>
+    <string name="url_must_end_with_a_supported_image_format_jpg_png_etc">URL must end with a supported image format (.jpg, .png, etc.)</string>
+    <string name="invalid_url_format">Invalid URL format</string>
+    <string name="image_url_cannot_be_empty">Image URL cannot be empty</string>
+    <string name="failed_to_post">Failed to post</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="submit_post">Submit Post</string>
+    <string name="placeholder_image">Placeholder Image</string>
+    <string name="selected_image">Selected Image</string>
+    <string name="create_a_new_post">Create a New Post</string>
 
 </resources>

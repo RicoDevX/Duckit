@@ -126,7 +126,6 @@ fun PostGalleryScreen(viewModel: PostGalleryViewModel = koinViewModel()) {
         }
     }
 
-    // 🔥 Show Post Dialog if a post is selected
     uiState.selectedPostId?.let { postId ->
         uiState.posts.find { it.id == postId }?.let { post ->
             PostDetailDialog(post = post, onDismiss = { viewModel.onEvent(PostGalleryEvent.DismissPostDialog) }, onVote = { isUpvote ->
@@ -135,7 +134,6 @@ fun PostGalleryScreen(viewModel: PostGalleryViewModel = koinViewModel()) {
         }
     }
 
-    // 🔥 Show Login Prompt if needed
     if (uiState.showLoginPrompt) {
         AlertDialog(
             onDismissRequest = { viewModel.onEvent(PostGalleryEvent.DismissLoginPrompt) },

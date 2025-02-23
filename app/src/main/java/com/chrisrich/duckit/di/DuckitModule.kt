@@ -33,7 +33,7 @@ val duckItModule = module {
     // Provides Navigation Manager
     single { NavigationManager() }
 
-    // Register com.chrisrich.duckit.utils.EmailValidator as a singleton
+    // Provide EmailValidator
     single<EmailValidator> { DefaultEmailValidator }
 
     // Provide Retrofit instance

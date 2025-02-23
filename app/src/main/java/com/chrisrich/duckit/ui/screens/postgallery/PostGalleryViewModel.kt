@@ -2,6 +2,7 @@ package com.chrisrich.duckit.ui.screens.postgallery
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.chrisrich.duckit.domain.model.Post
 import com.chrisrich.duckit.domain.usecase.postgallery.DownvotePostUseCase
 import com.chrisrich.duckit.domain.usecase.postgallery.GetPostsUseCase
 import com.chrisrich.duckit.domain.usecase.postgallery.UpvotePostUseCase
@@ -14,6 +15,29 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+sealed class PostGalleryEvent {
+    data object RefreshPostList : PostGalleryEvent()
+    data object FabClicked : PostGalleryEvent()
+    data object LogOut : PostGalleryEvent()
+    data object NavigateToSignIn : PostGalleryEvent()
+    data object DismissLoginPrompt : PostGalleryEvent()
+    data class RemovePost(val postId: String) : PostGalleryEvent()
+    data class VotePost(val postId: String, val isUpvote: Boolean) : PostGalleryEvent()
+    data class ShowPostDialog(val postId: String) : PostGalleryEvent()
+    data object DismissPostDialog : PostGalleryEvent()
+}
+
+data class PostGalleryViewState(
+    val posts: List<Post> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val isLoggedIn: Boolean = false,
+    val showLoginPrompt: Boolean = false,
+    val loginReason: Int = com.chrisrich.duckit.R.string.you_need_to_log_in_to_post_a_duck,
+    val showPostDialog: Boolean = false,
+    val selectedPostId: String? = null
+)
 
 class PostGalleryViewModel(
     private val getPostsUseCase: GetPostsUseCase,
@@ -127,10 +151,10 @@ class PostGalleryViewModel(
             updatePostState(postId)
 
             val voteResult =
-                if (isUpvote) upvotePostUseCase(postId, token) else downvotePostUseCase(
+                if (isUpvote) upvotePostUseCase(postId, "user_token") else downvotePostUseCase(
                     postId,
-                    token
-                )
+                    "User_token"
+                )//TODO: Doesn't work with a real token - need to fix this
 
             voteResult.collect { result ->
                 result.fold(

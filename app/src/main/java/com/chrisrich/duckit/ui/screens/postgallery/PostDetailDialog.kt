@@ -101,7 +101,6 @@ fun PostDetailDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 🔹 Voting Header
                 Text(
                     text = stringResource(R.string.vote_on_this_post),
                     fontSize = 16.sp,

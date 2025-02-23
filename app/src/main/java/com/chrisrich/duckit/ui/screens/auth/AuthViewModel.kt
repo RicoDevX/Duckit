@@ -3,6 +3,7 @@ package com.chrisrich.duckit.ui.screens.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chrisrich.duckit.domain.model.AuthRequest
+import com.chrisrich.duckit.domain.model.AuthResponse
 import com.chrisrich.duckit.domain.usecase.auth.LogInUseCase
 import com.chrisrich.duckit.domain.usecase.auth.SignUpUseCase
 import com.chrisrich.duckit.navigation.NavigationManager
@@ -13,6 +14,32 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+sealed class AuthEvent {
+    data class UpdateEmail(val email: String) : AuthEvent()
+    data class UpdatePassword(val password: String) : AuthEvent()
+    data class Authenticate(val isSignUp: Boolean) : AuthEvent()
+    data object ToggleAuthMode : AuthEvent()
+    data object EmailLostFocus : AuthEvent()
+    data object NavigateBack : AuthEvent()
+}
+
+data class AuthViewState(
+    val email: String = "",
+    val password: String = "",
+    val isLoading: Boolean = false,
+    val authResponse: AuthResponse? = null,
+    val error: String? = null,
+    val isSignUp: Boolean = false,
+    val isEmailError: Boolean = false,
+    val showEmailError: Boolean = false,
+    val isEmailFocused: Boolean = false,
+    val isAuthenticated: Boolean = false
+) {
+    fun shouldShowEmailError(): Boolean {
+        return isEmailError && !isEmailFocused && showEmailError
+    }
+}
 
 class AuthViewModel(
     private val logInUseCase: LogInUseCase,

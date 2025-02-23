@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
@@ -41,9 +42,10 @@ fun PostCreationForm(
 ) {
     var imageLoadSuccess by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { message ->
-            snackbarHostState.showSnackbar(message)
+            snackbarHostState.showSnackbar(context.getString(message))
         }
     }
 
@@ -52,13 +54,13 @@ fun PostCreationForm(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Create a New Post", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(R.string.create_a_new_post), style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = uiState.headline,
             onValueChange = { viewModel.onEvent(NewPostEvent.UpdateHeadline(it)) },
-            label = { Text("Headline") },
+            label = { Text(stringResource(R.string.headline)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -76,7 +78,7 @@ fun PostCreationForm(
                         .data(uiState.imageUrl)
                         .crossfade(true)
                         .build(),
-                    contentDescription = "Selected Image",
+                    contentDescription = stringResource(R.string.selected_image),
                     modifier = Modifier.fillMaxSize(),
                     onState = { state ->
                         val isSuccess = state is AsyncImagePainter.State.Success
@@ -90,8 +92,10 @@ fun PostCreationForm(
             } else {
                 Image(
                     painter = painterResource(id = R.drawable.img_duck_placeholder),
-                    contentDescription = "Placeholder Image",
-                    modifier = Modifier.fillMaxSize().align(Alignment.Center)
+                    contentDescription = stringResource(R.string.placeholder_image),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .align(Alignment.Center)
                 )
             }
         }
@@ -100,13 +104,17 @@ fun PostCreationForm(
         OutlinedTextField(
             value = uiState.imageUrl,
             onValueChange = { viewModel.onEvent(NewPostEvent.UpdateImageUrl(it)) },
-            label = { Text("Image URL") },
+            label = {
+                Text(
+                    stringResource(R.string.image_url)
+                )
+            },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
         if (uiState.imageUrlError != null) {
             Text(
-                text = uiState.imageUrlError,
+                text = stringResource(uiState.imageUrlError),
                 color = Color.Gray,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier
@@ -126,7 +134,7 @@ fun PostCreationForm(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = uiState.headline.isNotBlank() && imageLoadSuccess
             ) {
-                Text("Submit Post")
+                Text(stringResource(R.string.submit_post))
             }
         }
     }
