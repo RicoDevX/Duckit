@@ -1,9 +1,9 @@
 # Duckit - Mobile App  
 <br>
 <div style="display: flex; justify-content: center; gap: 10px;">
-      <img src="assets/view3.png" alt="Duckit Screenshot" width="200">
-    <img src="assets/view1.png" alt="Duckit Screenshot" width="200">
-    <img src="assets/view2.png" alt="Duckit Screenshot" width="200">
+      <img src="assets/screenshot3.png" alt="Duckit Screenshot" width="200">
+    <img src="assets/screenshot1.png" alt="Duckit Screenshot" width="200">
+    <img src="assets/screenshot2.png" alt="Duckit Screenshot" width="200">
 </div>
 <br>
 
