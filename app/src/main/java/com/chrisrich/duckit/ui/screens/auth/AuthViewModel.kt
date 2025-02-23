@@ -1,12 +1,12 @@
 package com.chrisrich.duckit.ui.screens.auth
 
-import EmailValidator
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chrisrich.duckit.domain.model.AuthRequest
 import com.chrisrich.duckit.domain.usecase.auth.LogInUseCase
 import com.chrisrich.duckit.domain.usecase.auth.SignUpUseCase
 import com.chrisrich.duckit.navigation.NavigationManager
+import com.chrisrich.duckit.utils.EmailValidator
 import com.chrisrich.duckit.utils.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
