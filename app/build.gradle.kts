@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.androidx.ui.test.junit4.android)
     implementation (libs.androidx.security.crypto)
     implementation(libs.konfetti.compose)
+    implementation (libs.androidx.material.icons.extended)
 
     testImplementation(libs.junit)
     testImplementation (libs.robolectric)

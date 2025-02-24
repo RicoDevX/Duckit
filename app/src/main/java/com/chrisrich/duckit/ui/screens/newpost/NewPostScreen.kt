@@ -28,7 +28,7 @@ fun NewPostScreen(
         topBar = {
             AppTopBar(
                 showBackButton = true,
-                onBackClick = { viewModel.onEvent(NewPostEvent.ResetForm) })
+                onBackClick = { viewModel.onEvent(NewPostEvent.NavigateBack) })
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->

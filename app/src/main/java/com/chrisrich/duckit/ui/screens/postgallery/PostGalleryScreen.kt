@@ -1,5 +1,6 @@
 package com.chrisrich.duckit.ui.screens.postgallery
 
+import PostDetailFullScreenDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.chrisrich.duckit.R
 import com.chrisrich.duckit.ui.screens.postgallery.components.ErrorScreen
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -49,6 +52,13 @@ fun PostGalleryScreen(viewModel: PostGalleryViewModel = koinViewModel()) {
         refreshing = uiState.isLoading,
         onRefresh = { viewModel.onEvent(PostGalleryEvent.RefreshPostList) }
     )
+
+    LaunchedEffect(uiState.showVoteError) {
+        if (uiState.showVoteError) {
+            delay(2000)
+            viewModel.onEvent(PostGalleryEvent.ResetVoteError)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -63,11 +73,15 @@ fun PostGalleryScreen(viewModel: PostGalleryViewModel = koinViewModel()) {
                 actions = {
                     TextButton(
                         onClick = {
-                            if (uiState.isLoggedIn) viewModel.logOut() else viewModel.onEvent(PostGalleryEvent.NavigateToSignIn)
+                            if (uiState.isLoggedIn) viewModel.logOut() else viewModel.onEvent(
+                                PostGalleryEvent.NavigateToSignIn
+                            )
                         }
                     ) {
                         Text(
-                            text = if (uiState.isLoggedIn) stringResource(R.string.log_out) else stringResource(R.string.sign_in),
+                            text = if (uiState.isLoggedIn) stringResource(R.string.log_out) else stringResource(
+                                R.string.sign_in
+                            ),
                             color = Color.White
                         )
                     }
@@ -128,9 +142,15 @@ fun PostGalleryScreen(viewModel: PostGalleryViewModel = koinViewModel()) {
 
     uiState.selectedPostId?.let { postId ->
         uiState.posts.find { it.id == postId }?.let { post ->
-            PostDetailDialog(post = post, onDismiss = { viewModel.onEvent(PostGalleryEvent.DismissPostDialog) }, onVote = { isUpvote ->
-                viewModel.onEvent(PostGalleryEvent.VotePost(post.id, isUpvote))
-            })
+            PostDetailFullScreenDialog(
+                post = post,
+                currentVotes = post.upvotes,
+                onDismiss = { viewModel.onEvent(PostGalleryEvent.DismissPostDialog) },
+                onVote = { isUpvote ->
+                    viewModel.onEvent(PostGalleryEvent.VotePost(post.id, isUpvote))
+                },
+                showVoteError = uiState.showVoteError,
+            )
         }
     }
 

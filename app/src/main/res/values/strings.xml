@@ -26,6 +26,7 @@
     <string name="upvote">Upvote</string>
     <string name="down_vote">Down vote</string>
     <string name="by">By %1$s</string>
+    <string name="has_votes">%1$s Votes</string>
     <string name="you_need_to_log_in_to_post_a_duck">You need to Log in to post a duck</string>
     <string name="submit">Post a Duck</string>
     <string name="post_my_duck">Quack &amp; Send</string>
@@ -33,7 +34,6 @@
     <string name="headline">Post a duck</string>
     <string name="already_have_an_account_sign_in">Already have an account? Sign In</string>
     <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
-    <string name="vote_on_this_post">Vote for this post!</string>
     <string name="authentication_required">Authentication required</string>
     <string name="ensure_the_headline_is_filled_and_the_image_has_loaded_successfully">Ensure the headline is filled and the image has loaded successfully.</string>
     <string name="url_must_end_with_a_supported_image_format_jpg_png_etc">URL must end with a supported image format (.jpg, .png, etc.)</string>
@@ -46,5 +46,6 @@
     <string name="placeholder_image">Placeholder Image</string>
     <string name="selected_image">Selected Image</string>
     <string name="create_a_new_post">Create a New Post</string>
+    <string name="voting_error_please_try_again">Voting error. Please try again!</string>
 
 </resources>

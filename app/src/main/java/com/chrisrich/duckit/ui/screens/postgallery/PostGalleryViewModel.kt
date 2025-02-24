@@ -26,6 +26,7 @@ sealed class PostGalleryEvent {
     data class VotePost(val postId: String, val isUpvote: Boolean) : PostGalleryEvent()
     data class ShowPostDialog(val postId: String) : PostGalleryEvent()
     data object DismissPostDialog : PostGalleryEvent()
+    data object ResetVoteError : PostGalleryEvent()
 }
 
 data class PostGalleryViewState(
@@ -36,7 +37,8 @@ data class PostGalleryViewState(
     val showLoginPrompt: Boolean = false,
     val loginReason: Int = com.chrisrich.duckit.R.string.you_need_to_log_in_to_post_a_duck,
     val showPostDialog: Boolean = false,
-    val selectedPostId: String? = null
+    val selectedPostId: String? = null,
+    val showVoteError: Boolean = false,
 )
 
 class PostGalleryViewModel(
@@ -80,6 +82,12 @@ class PostGalleryViewModel(
                     showPostDialog = false
                 )
             }
+
+            PostGalleryEvent.ResetVoteError -> _state.update {
+                it.copy(
+                    showVoteError = false
+                )
+            }
         }
     }
 
@@ -110,22 +118,6 @@ class PostGalleryViewModel(
         _state.update { it.copy(posts = it.posts.filterNot { post -> post.id == postId }) }
     }
 
-    private fun updatePostState(
-        postId: String,
-        votes: Int? = null
-    ) {
-        _state.update { state ->
-            val updatedPosts = state.posts.map {
-                if (it.id == postId) {
-                    it.copy(
-                        upvotes = votes ?: it.upvotes,
-                    )
-                } else it
-            }
-            state.copy(posts = updatedPosts)
-        }
-    }
-
     private fun onFabClicked() {
         _state.update { it.copy(showPostDialog = false, selectedPostId = null) }
 
@@ -139,37 +131,41 @@ class PostGalleryViewModel(
     private fun onVoteClicked(postId: String, isUpvote: Boolean) {
         val token = sessionManager.getAuthToken()
         if (token.isNullOrEmpty()) {
-            _state.update {
-                it.copy(
-                    showLoginPrompt = true
-                )
-            }
+            _state.update { it.copy(showLoginPrompt = true) }
             return
         }
 
         viewModelScope.launch {
-            updatePostState(postId)
-
             val voteResult =
                 if (isUpvote) upvotePostUseCase(postId, "user_token") else downvotePostUseCase(
                     postId,
-                    "User_token"
-                )//TODO: Doesn't work with a real token - need to fix this
+                    "user_token"
+                )//TODO: Shows 403 when trying to use real token
 
             voteResult.collect { result ->
                 result.fold(
                     onSuccess = { response ->
-                        updatePostState(postId, votes = response.votes)
+                        _state.update { state ->
+                            val updatedPosts = state.posts.map { post ->
+                                if (post.id == postId) {
+                                    post.copy(upvotes = response.votes)
+                                } else post
+                            }
+                            state.copy(posts = updatedPosts)
+                        }
                     },
                     onFailure = {
-                        updatePostState(
-                            postId//Fail Silently - No need to update votes
-                        )
+                        _state.update { state ->
+                            state.copy(
+                                showVoteError = true,
+                            )
+                        }
                     }
                 )
             }
         }
     }
+
 
     private fun navigateToSignIn() {
         _state.update {
