@@ -237,7 +237,10 @@ fun PostDetailFullScreenDialog(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 IconButton(
-                                    onClick = { onVote(true) },
+                                    onClick = {
+                                        onVote(true)
+                                        showContent = false
+                                    },
                                     modifier = Modifier.size(64.dp)
                                 ) {
                                     Icon(
@@ -255,7 +258,10 @@ fun PostDetailFullScreenDialog(
                                 }
 
                                 IconButton(
-                                    onClick = { onVote(false) },
+                                    onClick = {
+                                        onVote(false)
+                                        showContent = false
+                                    },
                                     modifier = Modifier.size(64.dp)
                                 ) {
                                     Icon(
