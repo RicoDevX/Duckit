@@ -15,7 +15,7 @@ Duckit is a mobile app built using **Jetpack Compose** and the **MVVM** architec
 ## Features  
 ✅ User authentication (Sign up & Sign in)  
 ✅ Fetch and display duck-related posts  
-✅ Upvote and downvote functionality
+✅ Upvote and downvote functionality<br>
 ✅ Clean architecture with MVVM pattern  
 ✅ Dependency injection using Koin  
 ✅ Compose-based UI for a modern Android experience  
